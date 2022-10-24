@@ -13,6 +13,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::group(['middleware' => ['auth'], 'prefix' => 'admin'], function () {
+    Route::get('/dashboard', 'AdminController@index')->name('admin.dashboard');
+
 });
+
+
+Route::group(['prefix' => 'user'], function () {
+    Route::post('/login', 'RegisterController@login')->name('user.login');
+    Route::get('/forget', 'RegisterController@passForget')->name('user.password.forget');
+    Route::get('/check', 'RegisterController@mobileCheck')->name('user.mobile.check');
+    Route::get('/new-pass', 'RegisterController@newPassword')->name('user.new.password');
+    Route::post('/new-pass', 'RegisterController@newPasswordStore')->name('user.new.password.store');
+});
+
+Route::get('/', 'FrontendController@index')->name('welcome');
